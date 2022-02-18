@@ -94,13 +94,13 @@ for(i in 1:10000){
     
     p <- predict(model, newdata=all_env_merge_testing_data_2,type="response")
     
-    d <- table(round(p),all_env_merge_testing_data_2$obesity_30)
+    d <- table(round(p),all_env_merge_testing_data_2$obesity)
 
     p_v2 <- round(p)
 
     false_check <- cbind(all_env_merge_testing_data_2,p_v2)
 
-    false_check_case_obesity <- false_check[false_check$obesity_30 == "2",] 
+    false_check_case_obesity <- false_check[false_check$obesity == "2",] 
 
     false_check_case_obesity_true <- false_check_case_obesity[false_check_case_obesity$p_v2 == "1",]
 
