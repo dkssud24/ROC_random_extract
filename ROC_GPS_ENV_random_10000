@@ -1,0 +1,215 @@
+library(ROCR)
+library(data.table)
+
+auc =0
+ma11 =0
+ma12 = 0
+ma21 = 0
+ma22 = 0
+auc_merge = 0
+
+auc_lst <- list()
+ma11_lst <- list()
+ma12_lst <- list()
+ma21_lst <- list()
+ma22_lst <- list()
+
+
+auc =0
+ma11 =0
+ma12 = 0
+ma21 = 0
+ma22 = 0
+auc_merge = 0
+
+auc_lst <- list()
+ma11_lst <- list()
+ma12_lst <- list()
+ma21_lst <- list()
+ma22_lst <- list()
+
+
+vigorous_914_t <- list()
+walk_864_t <- list()
+walkingpace_924_t <- list()
+stair_943_t <- list()
+veg_1289_t <- list()
+driedf_1319_t <- list()
+promeat_1349_t <- list()
+poul_1359_t <- list()
+beef_1369_t <- list()
+cereal_1458_t <- list()
+hot_1518_t <- list()
+water_1528_t <- list()
+tv_1070_t <- list()
+phone_1110_t <- list()
+com_2237_t <- list()
+alcohol_1558_t <- list()
+sleep_1160_t <- list()
+nap_1190_t <- list()
+gps_list_t <- list()
+
+
+vigorous_914_f <- list()
+walk_864_f <- list()
+walkingpace_924_f <- list()
+stair_943_f <- list()
+veg_1289_f <- list()
+driedf_1319_f <- list()
+promeat_1349_f <- list()
+poul_1359_f <- list()
+beef_1369_f <- list()
+cereal_1458_f <- list()
+hot_1518_f <- list()
+water_1528_f <- list()
+tv_1070_f <- list()
+phone_1110_f <- list()
+com_2237_f <- list()
+alcohol_1558_f <- list()
+sleep_1160_f <- list()
+nap_1190_f <- list()
+gps_list_f <- list()
+
+
+for(i in 1:10000){
+    sample_num = sample(1:nrow(all_env_merge_testing_data), size = round(0.2 * nrow(all_env_merge_testing_data)))
+    
+    all_env_merge_testing_data_2 = all_env_merge_testing_data[ sample_num, ]
+    
+    all_env_merge_testing_data_8 = all_env_merge_testing_data[ -sample_num, ]
+    
+    model <- glm ( as.factor(all_env_merge_testing_data_8$obesity_30) ~ X48 + age + sex + X914.0.0 + X864.0.0 + X924.0.0 + X943.0.0 + X1289.0.0 + X1319.0.0 + X1349.0.0 + X1359.0.0 + X1369.0.0 + X1458.0.0 + X1518.0.0 + X1528.0.0 + X1070.0.0 + X1110.0.0 + X2237.0.0 + X1558.0.0 + X1160.0.0 + X1190.0.0, data = all_env_merge_testing_data_8 ,family = binomial)
+    
+    p <- predict(model, newdata=all_env_merge_testing_data_2,type="response")
+    
+    pr <- prediction(p,all_env_merge_testing_data_2$obesity)
+    
+    prf <- performance(pr,measure="tpr",x.measure="fpr")
+    
+    auc <- performance(pr,measure="auc")
+    
+    auc <- auc@y.values[[1]]
+    
+    auc_merge = auc + auc_merge
+    
+    p <- predict(model, newdata=all_env_merge_testing_data_2,type="response")
+    
+    d <- table(round(p),all_env_merge_testing_data_2$obesity)
+
+    p_v2 <- round(p)
+
+    false_check <- cbind(all_env_merge_testing_data_2,p_v2)
+
+    false_check_case_obesity <- false_check[false_check$obesity == "2",] 
+
+    false_check_case_obesity_true <- false_check_case_obesity[false_check_case_obesity$p_v2 == "1",]
+
+    false_check_case_obesity_false <- false_check_case_obesity[false_check_case_obesity$p_v2 =="0",]    
+
+    mean_gps_t <- mean(false_check_case_obesity_true$grid_p100_v2)
+    mean_gps_f <- mean(false_check_case_obesity_false$grid_p100_v2)
+    gps_list_t <- append(gps_list_t,mean_gps_t)
+    gps_list_f <- append(gps_list_f,mean_gps_f)    
+    
+    mean_914_t <- mean(false_check_case_obesity_true$X914.0.0)
+    mean_914_f <- mean(false_check_case_obesity_false$X914.0.0)
+    vigorous_914_t <- append(vigorous_914_t,mean_914_t)
+    vigorous_914_f <- append(vigorous_914_f,mean_914_f)
+    
+    mean_864_t <- mean(false_check_case_obesity_true$grid_p100_v2)
+    mean_864_f <- mean(false_check_case_obesity_false$grid_p100_v2)
+    walk_864_t <- append(walk_864_t,mean_864_t)
+    walk_864_f <- append(walk_864_f,mean_864_f)  
+    
+    mean_924_t <- mean(false_check_case_obesity_true$X924.0.0)
+    mean_924_f <- mean(false_check_case_obesity_false$X924.0.0)
+    walkingpace_924_t <- append(walkingpace_924_t,mean_924_t)
+    walkingpace_924_f <- append(walkingpace_924_f,mean_924_f)
+    
+    mean_943_t <- mean(false_check_case_obesity_true$X943.0.0)
+    mean_943_f <- mean(false_check_case_obesity_false$X943.0.0)
+    stair_943_t <- append(stair_943_t,mean_943_t)
+    stair_943_f <- append(stair_943_f,mean_943_f)
+    
+    mean_1289_t <- mean(false_check_case_obesity_true$X1289.0.0)
+    mean_1289_f <- mean(false_check_case_obesity_false$X1289.0.0)
+    veg_1289_t <- append(veg_1289_t,mean_1289_t)
+    veg_1289_f <- append(veg_1289_f,mean_1289_f)
+    
+    mean_1319_t <- mean(false_check_case_obesity_true$X1319.0.0)
+    mean_1319_f <- mean(false_check_case_obesity_false$X1319.0.0)
+    driedf_1319_t <- append(driedf_1319_t,mean_1319_t)
+    driedf_1319_f <- append(driedf_1319_f,mean_1319_f)
+    
+    mean_1349_t <- mean(false_check_case_obesity_true$X1349.0.0)
+    mean_1349_f <- mean(false_check_case_obesity_false$X1349.0.0)
+    promeat_1349_t <- append(promeat_1349_t,mean_1349_t)
+    promeat_1349_f <- append(promeat_1349_f,mean_1349_f)
+    
+    mean_1359_t <- mean(false_check_case_obesity_true$X1359.0.0)
+    mean_1359_f <- mean(false_check_case_obesity_false$X1359.0.0)
+    poul_1359_t <- append(poul_1359_t,mean_1359_t)
+    poul_1359_f <- append(poul_1359_f,mean_1359_f)
+    
+    mean_1369_t <- mean(false_check_case_obesity_true$X1369.0.0)
+    mean_1369_f <- mean(false_check_case_obesity_false$X1369.0.0)
+    beef_1369_t <- append(beef_1369_t,mean_1369_t)
+    beef_1369_f <- append(beef_1369_f,mean_1369_f)
+    
+    mean_1458_t <- mean(false_check_case_obesity_true$X1458.0.0)
+    mean_1458_f <- mean(false_check_case_obesity_false$X1458.0.0)
+    cereal_1458_t <- append(cereal_1458_t,mean_1458_t)
+    cereal_1458_f <- append(cereal_1458_f,mean_1458_f)
+    
+    mean_1518_t <- mean(false_check_case_obesity_true$X1518.0.0)
+    mean_1518_f <- mean(false_check_case_obesity_false$X1518.0.0)
+    hot_1518_t <- append(hot_1518_t,mean_1518_t)
+    hot_1518_f <- append(hot_1518_f,mean_1518_f)
+    
+    mean_1528_t <- mean(false_check_case_obesity_true$X1528.0.0)
+    mean_1528_f <- mean(false_check_case_obesity_false$X1528.0.0)
+    water_1528_t <- append(water_1528_t,mean_1528_t)
+    water_1528_f <- append(water_1528_f,mean_1528_f)
+    
+    mean_1070_t <- mean(false_check_case_obesity_true$X1070.0.0)
+    mean_1070_f <- mean(false_check_case_obesity_false$X1070.0.0)
+    tv_1070_t <- append(tv_1070_t,mean_1070_t)
+    tv_1070_f <- append(tv_1070_f,mean_1070_f)
+    
+    mean_1110_t <- mean(false_check_case_obesity_true$X1110.0.0)
+    mean_1110_f <- mean(false_check_case_obesity_false$X1110.0.0)
+    phone_1110_t <- append(phone_1110_t,mean_1110_t)
+    phnoe_1110_f <- append(phone_1110_f,mean_1110_f)
+    
+    mean_2237_t <- mean(false_check_case_obesity_true$X2237.0.0)
+    mean_2237_f <- mean(false_check_case_obesity_false$X2237.0.0)
+    com_2237_t <- append(com_2237_t,mean_2237_t)
+    com_2237_f <- append(com_2237_f,mean_2237_f)
+    
+    mean_1558_t <- mean(false_check_case_obesity_true$X1558.0.0)
+    mean_1558_f <- mean(false_check_case_obesity_false$X1558.0.0)
+    alcohol_1558_t <- append(alcohol_1558_t,mean_1558_t)
+    alcohol_1558_f <- append(alcohol_1558_f,mean_1558_f)
+    
+    mean_1160_t <- mean(false_check_case_obesity_true$X1160.0.0)
+    mean_1160_f <- mean(false_check_case_obesity_false$X1160.0.0)
+    sleep_1160_t <- append(sleep_1160_t,mean_1160_t)
+    sleep_1160_f <- append(sleep_1160_f,mean_1160_f)
+    
+    mean_1190_t <- mean(false_check_case_obesity_true$X1190.0.0)
+    mean_1190_f <- mean(false_check_case_obesity_false$X1190.0.0)
+    nap_1190_t <- append(nap_1190_t,mean_1190_t)
+    nap_1190_f <- append(nap_1190_f,mean_1190_f)
+
+    ma11 <- ma11 + d[1,1]
+    ma12 <- ma12 + d[1,2]
+    ma21 <- ma21 + d[2,1]
+    ma22 <- ma22 + d[2,2]
+    
+    auc_lst <- append(auc_lst,auc)
+    ma11_lst <- append(ma11_lst,d[1,1])
+    ma12_lst <- append(ma12_lst,d[1,2])
+    ma21_lst <- append(ma21_lst,d[2,1])
+    ma22_lst <- append(ma22_lst,d[2,2])
+    print(i)
+}
